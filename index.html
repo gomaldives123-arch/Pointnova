@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#6d3df5" />
+  <meta name="description" content="PointNova - prototype mobile de récompenses" />
+  <link rel="manifest" href="manifest.json" />
+  <title>PointNova</title>
+  <style>
+    :root{
+      --bg:#f3f5fb;--card:#fff;--text:#101526;--muted:#7b8499;
+      --purple:#7444f4;--blue:#3158f5;--green:#16a36a;--orange:#f6a500;
+      --shadow:0 10px 28px rgba(22,28,55,.10);--radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    button,input{font:inherit}
+    .app{max-width:560px;margin:auto;min-height:100vh;padding-bottom:92px}
+    header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #edf0f7}
+    .brand{display:flex;align-items:center;gap:11px;font-size:24px;font-weight:800}
+    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--blue));display:grid;place-items:center;color:#fff;font-weight:900}
+    .pill{background:#f0eaff;color:#6934d8;padding:10px 14px;border-radius:999px;font-weight:800}
+    main{padding:26px 18px}
+    h1{margin:0;font-size:38px;line-height:1.08;background:linear-gradient(90deg,#9a42df,#3158f5);-webkit-background-clip:text;color:transparent}
+    .welcome{font-size:21px;color:var(--muted);margin:12px 0 28px}
+    .grid{display:grid;gap:16px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+    .balance{display:flex;align-items:flex-start;justify-content:space-between}
+    .label{text-transform:uppercase;color:#69758e;font-size:14px;letter-spacing:.08em;font-weight:800}
+    .big{font-size:52px;font-weight:900;margin-top:8px}
+    .big small{font-size:22px;color:var(--purple)}
+    .euro{background:#f1e8ff;color:#8c48df;padding:15px 18px;border-radius:18px;font-size:24px;font-weight:900}
+    .progress{height:12px;background:#edf0f7;border-radius:999px;margin-top:22px;overflow:hidden}
+    .progress > span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--blue));transition:.3s}
+    .row{display:flex;align-items:center;gap:14px}
+    .icon{width:58px;height:58px;border-radius:18px;background:#f0e9ff;color:var(--purple);display:grid;place-items:center;font-size:27px;flex:none}
+    .grow{flex:1}.title{font-size:20px;font-weight:850}.sub{color:var(--muted);margin-top:4px}
+    .reward{background:#f2eaff;color:#8c48df;padding:9px 12px;border-radius:999px;font-weight:800;white-space:nowrap}
+    .btn{border:0;background:linear-gradient(135deg,var(--purple),var(--blue));color:white;padding:14px 18px;border-radius:16px;font-weight:850;box-shadow:0 8px 18px rgba(83,70,230,.25)}
+    .btn.secondary{background:#eef1f8;color:#506078;box-shadow:none}
+    .btn.full{width:100%}
+    .survey{display:flex;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid #eef1f7}
+    .survey:last-child{border:0}.survey .meta{font-size:13px;color:var(--muted);margin-top:4px}
+    nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);background:#fff;border-top:1px solid #e9edf4;display:grid;grid-template-columns:repeat(4,1fr);padding:9px 8px calc(9px + env(safe-area-inset-bottom));z-index:20}
+    nav button{border:0;background:none;color:#748198;padding:8px 2px;font-size:12px;font-weight:750}
+    nav button.active{color:var(--purple)}
+    nav .nicon{display:block;font-size:22px;margin-bottom:3px}
+    .screen{display:none}.screen.active{display:block}
+    .notice{background:#fff8df;color:#7a5b00;border:1px solid #ffe69a;padding:14px;border-radius:16px;font-size:14px;line-height:1.45}
+    .history-item{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #eef1f7}
+    .plus{color:var(--green);font-weight:850}
+    input{width:100%;border:1px solid #dde3ee;border-radius:15px;padding:14px;background:#fff;margin:8px 0 14px}
+    .tiny{font-size:12px;color:var(--muted);line-height:1.5}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><div class="logo">P</div>PointNova</div>
+    <div class="pill">⚡ <span id="headerPts">0</span> pts</div>
+  </header>
+
+  <main>
+    <section id="home" class="screen active">
+      <h1>Tableau de bord</h1>
+      <p class="welcome">Bon retour, <strong id="userName">membre</strong></p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="balance">
+            <div>
+              <div class="label">Solde total</div>
+              <div class="big"><span id="balancePts">0</span> <small>pts</small></div>
+            </div>
+            <div class="euro">€<span id="balanceEuro">0.00</span></div>
+          </div>
+          <div class="progress"><span id="cashProgress"></span></div>
+          <p class="tiny">1 000 points = 1 € dans cette démo.</p>
+        </div>
+
+        <div class="card row">
+          <div class="icon">🎯</div>
+          <div class="grow">
+            <div class="title">Objectif du jour</div>
+            <div class="sub"><span id="dailyLeft">3</span> actions restantes</div>
+          </div>
+          <div class="reward">+20 pts</div>
+        </div>
+
+        <div class="card">
+          <div class="title">Bonus quotidien</div>
+          <p class="sub">Reviens chaque jour pour récupérer un bonus.</p>
+          <button id="dailyBtn" class="btn full">Récupérer +10 pts</button>
+        </div>
+
+        <div class="notice">
+          Prototype de démonstration : les points n'ont aucune valeur réelle et aucun paiement n'est effectué.
+        </div>
+      </div>
+    </section>
+
+    <section id="surveys" class="screen">
+      <h1>Sondages</h1>
+      <p class="welcome">Choisis une mission de démonstration.</p>
+      <div class="card" id="surveyList"></div>
+    </section>
+
+    <section id="wallet" class="screen">
+      <h1>Mon solde</h1>
+      <p class="welcome">Gère tes points de démonstration.</p>
+      <div class="card">
+        <div class="label">Disponible</div>
+        <div class="big"><span id="walletPts">0</span> <small>pts</small></div>
+        <label class="sub">Montant de retrait en euros</label>
+        <input id="withdrawAmount" type="number" min="5" step="1" placeholder="Minimum 5 €" />
+        <button class="btn full" id="withdrawBtn">Simuler un retrait</button>
+        <p class="tiny">Cette fonction simule seulement le parcours. Aucun argent n'est envoyé.</p>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="title">Historique</div>
+        <div id="history"></div>
+      </div>
+    </section>
+
+    <section id="profile" class="screen">
+      <h1>Profil</h1>
+      <p class="welcome">Réglages locaux de la démo.</p>
+      <div class="card">
+        <label class="sub">Ton prénom ou pseudo</label>
+        <input id="nameInput" placeholder="Ex. Maxime" />
+        <button class="btn full" id="saveName">Enregistrer</button>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="title">Parrainage</div>
+        <p class="sub">Code de démonstration : <strong id="refCode">PN-0000</strong></p>
+        <button class="btn secondary full" id="copyCode">Copier le code</button>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <button class="btn secondary full" id="resetBtn">Réinitialiser la démo</button>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <button class="active" data-screen="home"><span class="nicon">🏠</span>Accueil</button>
+    <button data-screen="surveys"><span class="nicon">📋</span>Sondages</button>
+    <button data-screen="wallet"><span class="nicon">👛</span>Solde</button>
+    <button data-screen="profile"><span class="nicon">👤</span>Profil</button>
+  </nav>
+</div>
+
+<script>
+const KEY = "pointnova_demo_v1";
+const surveys = [
+  {id:"s1", title:"Habitudes d'achat", mins:3, pts:40},
+  {id:"s2", title:"Applications mobiles", mins:5, pts:65},
+  {id:"s3", title:"Streaming et musique", mins:4, pts:50},
+  {id:"s4", title:"Produits alimentaires", mins:6, pts:80}
+];
+
+let state = JSON.parse(localStorage.getItem(KEY) || "null") || {
+  name:"membre", points:0, completed:[], history:[], lastDaily:null, actionsToday:0
+};
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); render(); }
+function euro(){ return (state.points/1000).toFixed(2); }
+function addHistory(label, amount){
+  state.history.unshift({label, amount, date:new Date().toLocaleString("fr-FR")});
+  state.history = state.history.slice(0,20);
+}
+function render(){
+  document.querySelectorAll("#headerPts,#balancePts,#walletPts").forEach(e=>e.textContent=state.points);
+  document.getElementById("balanceEuro").textContent=euro();
+  document.getElementById("cashProgress").style.width=Math.min(100,(state.points%1000)/10)+"%";
+  document.getElementById("userName").textContent=state.name;
+  document.getElementById("nameInput").value=state.name==="membre"?"":state.name;
+  document.getElementById("dailyLeft").textContent=Math.max(0,3-state.actionsToday);
+  document.getElementById("refCode").textContent="PN-"+btoa(state.name).replace(/[^A-Z0-9]/gi,"").slice(0,6).toUpperCase().padEnd(6,"0");
+  const today=new Date().toISOString().slice(0,10);
+  const db=document.getElementById("dailyBtn");
+  db.disabled=state.lastDaily===today;
+  db.textContent=db.disabled?"Bonus déjà récupéré":"Récupérer +10 pts";
+
+  const list=document.getElementById("surveyList");
+  list.innerHTML="";
+  surveys.forEach(s=>{
+    const done=state.completed.includes(s.id);
+    const row=document.createElement("div"); row.className="survey";
+    row.innerHTML=`<div class="icon">📝</div><div class="grow"><div class="title">${s.title}</div><div class="meta">${s.mins} min • +${s.pts} pts</div></div><button class="btn ${done?"secondary":""}" ${done?"disabled":""}>${done?"Terminé":"Commencer"}</button>`;
+    row.querySelector("button").onclick=()=>completeSurvey(s);
+    list.appendChild(row);
+  });
+
+  const hist=document.getElementById("history");
+  hist.innerHTML=state.history.length?state.history.map(h=>`<div class="history-item"><div><strong>${h.label}</strong><div class="tiny">${h.date}</div></div><div class="${h.amount>=0?"plus":""}">${h.amount>=0?"+":""}${h.amount} pts</div></div>`).join(""):`<p class="sub">Aucune opération.</p>`;
+}
+
+function completeSurvey(s){
+  if(state.completed.includes(s.id)) return;
+  if(!confirm(`Simuler la fin du sondage “${s.title}” et ajouter ${s.pts} points ?`)) return;
+  state.completed.push(s.id); state.points+=s.pts; state.actionsToday++;
+  addHistory(s.title,s.pts); save();
+}
+document.querySelectorAll("nav button").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById(btn.dataset.screen).classList.add("active");
+});
+document.getElementById("dailyBtn").onclick=()=>{
+  const today=new Date().toISOString().slice(0,10);
+  if(state.lastDaily===today)return;
+  state.lastDaily=today; state.points+=10; state.actionsToday++;
+  addHistory("Bonus quotidien",10); save();
+};
+document.getElementById("saveName").onclick=()=>{
+  const n=document.getElementById("nameInput").value.trim();
+  if(!n)return alert("Entre un prénom ou un pseudo.");
+  state.name=n.slice(0,30); save(); alert("Profil enregistré.");
+};
+document.getElementById("withdrawBtn").onclick=()=>{
+  const amount=Number(document.getElementById("withdrawAmount").value);
+  if(!Number.isFinite(amount)||amount<5)return alert("Minimum 5 €.");
+  const required=Math.round(amount*1000);
+  if(state.points<required)return alert(`Il faut ${required} points.`);
+  alert("Simulation uniquement : aucun retrait réel n'a été créé.");
+};
+document.getElementById("copyCode").onclick=async()=>{
+  const code=document.getElementById("refCode").textContent;
+  try{await navigator.clipboard.writeText(code);alert("Code copié.");}catch{prompt("Copie ce code :",code);}
+};
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("Réinitialiser tous les points et l'historique ?")){localStorage.removeItem(KEY);location.reload();}
+};
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+render();
+</script>
+</body>
+</html>

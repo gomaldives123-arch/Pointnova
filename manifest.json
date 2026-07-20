@@ -1,0 +1,16 @@
+{
+  "name": "PointNova",
+  "short_name": "PointNova",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f5fb",
+  "theme_color": "#6d3df5",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
